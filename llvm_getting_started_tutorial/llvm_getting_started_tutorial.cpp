@@ -62,6 +62,16 @@ static int gettok() {
 		return tok_number;
 	}
 
+	if (LastChar == '#') {
+		// Comment until EoL
+		do {
+			LastChar = getchar();
+		} while (LastChar != EOF && LastChar != '\n');
+
+		if (LastChar != EOF) {
+			return gettok();
+		}
+	}
 
 	// Otherwise, just return the character as its ASCII value.
 	int ThisChar = LastChar;
