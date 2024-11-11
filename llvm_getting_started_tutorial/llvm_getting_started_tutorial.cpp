@@ -87,6 +87,12 @@ static int gettok() {
 	return ThisChar;
 }
 
+//===----------------------------------------------------------------------===//
+// Abstract Syntax Tree (aka Parse Tree)
+//===----------------------------------------------------------------------===//
+
+namespace {
+
 // ExprAST - Base class for all expression nodes.
 class ExprAST {
 public:
@@ -155,6 +161,9 @@ public:
 				std::unique_ptr<ExprAST> Body)
 		: Proto(std::move(Proto)), Body(std::move(Body)) {}
 };
+
+} // End anonymous namespace
+
 
 int main() {
 	return 0;
