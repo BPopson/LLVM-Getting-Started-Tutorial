@@ -164,6 +164,24 @@ public:
 
 } // End anonymous namespace
 
+//===----------------------------------------------------------------------===//
+// Parser
+//===----------------------------------------------------------------------===//
+
+/// CurTok/getNextToken - Provide a simple token buffer. CurTok is the current
+/// token the parser is looking at. getNextToken reads another token from the 
+/// lexer and updates CurTok with tis results.
+static int CurTok;
+static int getNextTok() {
+	return CurTok = gettok();
+}
+
+/// LogError* - These are little helper functions for error handling.
+std::unique_ptr<ExprAST> LogError(const char* Str) {
+	fprintf(stderr, "Error: %s\n", Str);
+	return nullptr;
+}
+
 
 int main() {
 	return 0;
