@@ -182,6 +182,14 @@ std::unique_ptr<ExprAST> LogError(const char* Str) {
 	return nullptr;
 }
 
+/// numerexpr ::= number
+static std::unique_ptr<ExprAST> ParseNumberExpr() {
+	auto Result = std::make_unique<NumberExprAST>(NumVal);
+	getNextToken(); // Consume the number
+	return std::move(Result);
+}
+
+
 
 int main() {
 	return 0;
