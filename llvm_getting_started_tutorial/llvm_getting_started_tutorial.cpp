@@ -1,12 +1,15 @@
-﻿#include "llvm_getting_started_tutorial.h"
+﻿#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-using namespace std;
-
-int main()
-{
-	cout << "Hello CMake." << endl;
-	return 0;
-}
+//===----------------------------------------------------------------------===//
+// Lexer
+//===----------------------------------------------------------------------===//
 
 // The lexer returns token [0-255] if it is an unknown character, otherwise one
 // of these for known things.
