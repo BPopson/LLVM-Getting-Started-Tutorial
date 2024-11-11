@@ -172,7 +172,7 @@ public:
 /// token the parser is looking at. getNextToken reads another token from the 
 /// lexer and updates CurTok with tis results.
 static int CurTok;
-static int getNextTok() {
+static int getNextToken() {
 	return CurTok = gettok();
 }
 
