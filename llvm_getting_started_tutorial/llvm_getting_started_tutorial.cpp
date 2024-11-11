@@ -189,6 +189,22 @@ static std::unique_ptr<ExprAST> ParseNumberExpr() {
 	return std::move(Result);
 }
 
+/// parenexpr ::= '(' expression ')'
+static std::unique_ptr<ExprAST> ParseParenExpr() {
+	getNextToken(); // Eat (
+	auto V = ParseExpression();
+
+	if (!V) {
+		return nullptr;
+	}
+
+	if (CurTok != ')') {
+		return LogError("expected ')'");
+	}
+
+	getNextToken(); // Eat )
+	return V;
+}
 
 
 int main() {
