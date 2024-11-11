@@ -93,74 +93,74 @@ static int gettok() {
 
 namespace {
 
-// ExprAST - Base class for all expression nodes.
-class ExprAST {
-public:
-	virtual ~ExprAST() = default;
-};
+	// ExprAST - Base class for all expression nodes.
+	class ExprAST {
+	public:
+		virtual ~ExprAST() = default;
+	};
 
-/// NumberExprAST - Expression class for number literals like "1.0".
-class NumberExprAST : public ExprAST {
-	double Val;
+	/// NumberExprAST - Expression class for number literals like "1.0".
+	class NumberExprAST : public ExprAST {
+		double Val;
 
-public:
-	NumberExprAST(double Val) : Val(Val) {}
-};
+	public:
+		NumberExprAST(double Val) : Val(Val) {}
+	};
 
-/// VariableExprAST - Expression class for referencing a variable, like "a".
-class VariableExprAST : public ExprAST {
-	std::string Name;
+	/// VariableExprAST - Expression class for referencing a variable, like "a".
+	class VariableExprAST : public ExprAST {
+		std::string Name;
 
-public:
-	VariableExprAST(const std::string& Name) : Name(Name) {}
-};
+	public:
+		VariableExprAST(const std::string& Name) : Name(Name) {}
+	};
 
-/// BinaryExprAST - Expression class for a binary operator.
-class BinaryExprAST : public ExprAST {
-	char Op;
-	std::unique_ptr<ExprAST> LHS, RHS;
+	/// BinaryExprAST - Expression class for a binary operator.
+	class BinaryExprAST : public ExprAST {
+		char Op;
+		std::unique_ptr<ExprAST> LHS, RHS;
 
-public:
-	BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
-				  std::unique_ptr<ExprAST> RHS)
-		: Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
-};
+	public:
+		BinaryExprAST(char Op, std::unique_ptr<ExprAST> LHS,
+			std::unique_ptr<ExprAST> RHS)
+			: Op(Op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+	};
 
-/// CallExprAST - Expression class for function calls.
-class CallExprAST : public ExprAST {
-	std::string Callee;
-	std::vector <std::unique_ptr<ExprAST>> Args;
+	/// CallExprAST - Expression class for function calls.
+	class CallExprAST : public ExprAST {
+		std::string Callee;
+		std::vector <std::unique_ptr<ExprAST>> Args;
 
-public:
-	CallExprAST(const std::string &Callee,
-				std::vector<std::unique_ptr<ExprAST>> Args)
-		: Callee(Callee), Args(std::move(Args)) {}
-};
+	public:
+		CallExprAST(const std::string& Callee,
+			std::vector<std::unique_ptr<ExprAST>> Args)
+			: Callee(Callee), Args(std::move(Args)) {}
+	};
 
-/// PrototypeAST - This class represents the "prototype" for a function,
-/// which captures its name, and its argument names (this implicitly the number
-/// of arguments the functino takes).
-class PrototypeAST {
-	std::string Name;
-	std::vector<std::string> Args;
+	/// PrototypeAST - This class represents the "prototype" for a function,
+	/// which captures its name, and its argument names (this implicitly the number
+	/// of arguments the functino takes).
+	class PrototypeAST {
+		std::string Name;
+		std::vector<std::string> Args;
 
-public:
-	PrototypeAST(const std::string& Name, std::vector<std::string> Args)
-		: Name(Name), Args(std::move(Args)) {}
-	
-	const std::string& getName() const { return Name; }
-};
+	public:
+		PrototypeAST(const std::string& Name, std::vector<std::string> Args)
+			: Name(Name), Args(std::move(Args)) {}
 
-/// FunctionAST - This class represents a function definition itself.
-class FunctionAST {
-	std::unique_ptr<PrototypeAST> Proto;
-	std::unique_ptr<ExprAST> Body;
+		const std::string& getName() const { return Name; }
+	};
 
-public:
-	FunctionAST(std::unique_ptr<PrototypeAST> Proto,
-				std::unique_ptr<ExprAST> Body)
-		: Proto(std::move(Proto)), Body(std::move(Body)) {}
-};
+	/// FunctionAST - This class represents a function definition itself.
+	class FunctionAST {
+		std::unique_ptr<PrototypeAST> Proto;
+		std::unique_ptr<ExprAST> Body;
+
+	public:
+		FunctionAST(std::unique_ptr<PrototypeAST> Proto,
+			std::unique_ptr<ExprAST> Body)
+			: Proto(std::move(Proto)), Body(std::move(Body)) {}
+	};
 
 } // End anonymous namespace
 
@@ -204,6 +204,49 @@ static std::unique_ptr<ExprAST> ParseParenExpr() {
 
 	getNextToken(); // Eat )
 	return V;
+}
+
+/// identifierexpr
+///   ::= identifier
+///   ::= identifier '(' expression* ')'
+static std::unique_ptr<ExprAST> ParseIdentifierExpr() {
+	std::string IdName = IdentifierStr;
+
+	getNextToken(); // Eat identifier
+
+	if (CurTok != '(') {
+		return std::make_unique<VariableExprAST>(IdName);
+	}
+
+	// Call
+	getNextToken(); // Eat (
+	std::vector<std::unique_ptr<VariableExprAST>> Args;
+
+	if (CurTok != ')') {
+		while (true) {
+			if (auto Arg = ParseExpression()) {
+				Args.push_back(std::move(Arg));
+			}
+			else {
+				return nullptr;
+			}
+
+			if (CurTok == ')') {
+				break;
+			}
+
+			if (CurTok != ',') {
+				return LogError("Expected ')' or ',' in argument list");
+			}
+
+			getNextToken();
+		}
+	}
+
+	// Eat the ')'
+	getNextToken();
+
+	return std::make_unique<CallExprAST>(IdName, std::move(Args));
 }
 
 
