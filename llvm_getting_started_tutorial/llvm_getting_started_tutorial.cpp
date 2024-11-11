@@ -131,6 +131,19 @@ public:
 		: Callee(Callee), Args(std::move(Args)) {}
 };
 
+/// PrototypeAST - This class represents the "prototype" for a function,
+/// which captures its name, and its argument names (this implicitly the number
+/// of arguments the functino takes).
+class PrototypeAST {
+	std::string Name;
+	std::vector<std::string> Args;
+
+public:
+	PrototypeAST(const std::string& Name, std::vector<std::string> Args)
+		: Name(Name), Args(std::move(Args)) {}
+	
+	const std::string& getName() const { return Name; }
+};
 
 int main() {
 	return 0;
