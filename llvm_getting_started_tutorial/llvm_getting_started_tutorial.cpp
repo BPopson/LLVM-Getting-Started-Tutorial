@@ -188,6 +188,11 @@ std::unique_ptr<ExprAST> LogError(const char* Str) {
 	return nullptr;
 }
 
+std::unique_ptr<PrototypeAST> LogErrorP(const char* Str) {
+	LogError(Str);
+	return nullptr;
+}
+
 /// numerexpr ::= number
 static std::unique_ptr<ExprAST> ParseNumberExpr() {
 	auto Result = std::make_unique<NumberExprAST>(NumVal);
