@@ -51,6 +51,18 @@ static int gettok() {
 		return tok_identifier;
 	}
 
+	if (isdigit(LastChar) || LastChar == '.') { // Number: [0-9.]+
+		std::string NumStr;
+		do {
+			NumStr += LastChar;
+			LastChar = getchar();
+		} while (isdigit(LastChar) || LastChar == '.');
+
+		NumVal = strtod(NumStr.c_str(), 0);
+		return tok_number;
+	}
+
+
 	// Otherwise, just return the character as its ASCII value.
 	int ThisChar = LastChar;
 	LastChar = getchar();
