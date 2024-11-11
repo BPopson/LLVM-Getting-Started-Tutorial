@@ -168,6 +168,12 @@ namespace {
 // Parser
 //===----------------------------------------------------------------------===//
 
+// Forward declarations
+static std::unique_ptr<ExprAST> ParseExpression();
+static std::unique_ptr<ExprAST> ParsePrimary();
+static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec, std::unique_ptr<ExprAST> LHS);
+
+
 /// CurTok/getNextToken - Provide a simple token buffer. CurTok is the current
 /// token the parser is looking at. getNextToken reads another token from the 
 /// lexer and updates CurTok with tis results.
