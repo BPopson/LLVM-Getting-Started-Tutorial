@@ -35,8 +35,26 @@ static int gettok() {
 	}
 
 	if (isalpha(LastChar)) { // Identifier: [a-zA-Z][a-zA-Z0-9]*
-		Ident
+		IdentifierStr = LastChar;
+		while (isalnum((LastChar = getchar()))) {
+			IdentifierStr += LastChar;
+		}
+
+		if (IdentifierStr == "def") {
+			return tok_def;
+		}
+
+		if (IdentifierStr == "extern") {
+			return tok_extern;
+		}
+
+		return tok_identifier;
 	}
+
+	// Otherwise, just return the character as its ASCII value.
+	int ThisChar = LastChar;
+	LastChar = getchar();
+	return ThisChar;
 }
 
 
