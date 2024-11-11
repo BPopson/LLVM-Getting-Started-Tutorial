@@ -207,8 +207,8 @@ static std::unique_ptr<ExprAST> ParseParenExpr() {
 }
 
 /// identifierexpr
-///   ::= identifier
-///   ::= identifier '(' expression* ')'
+///		::= identifier
+///		::= identifier '(' expression* ')'
 static std::unique_ptr<ExprAST> ParseIdentifierExpr() {
 	std::string IdName = IdentifierStr;
 
