@@ -220,7 +220,7 @@ static std::unique_ptr<ExprAST> ParseIdentifierExpr() {
 
 	// Call
 	getNextToken(); // Eat (
-	std::vector<std::unique_ptr<VariableExprAST>> Args;
+	std::vector<std::unique_ptr<ExprAST>> Args;
 
 	if (CurTok != ')') {
 		while (true) {
